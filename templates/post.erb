@@ -1,0 +1,17 @@
+<div class="hero">
+  <%= image_tag(_.post.main_image, class: "hero-image") %>
+</div>
+<div class="container">
+  <article>
+    <header>
+      <h1><%= _.post.title %></h1>
+      <p><%= _.post.date %></p>
+    </header>
+
+    <%= yield %>
+
+  </article>
+</div>
+<footer>
+  <a href="/" class="text-link">← Home</a>
+</footer>

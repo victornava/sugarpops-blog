@@ -1,0 +1,148 @@
+#!/usr/bin/env ruby
+
+# TODO: Setup to execute/build from any location
+# TODO: global config: site_name, site_url, image_path...
+# TODO: scape special chars on html output?
+
+require 'erb'
+require 'yaml'
+require 'ostruct'
+require 'date'
+
+# Config
+
+def root_url
+  "http://sugarpops.world/"
+end
+
+# Meat
+
+Post = Struct.new(
+  :title,
+  :description,
+  :main_image,
+  :date,
+  :template,
+  :slug,
+  :url,
+  :source_path,
+  :public_path
+)
+
+def template(file_name)
+  File.read("templates/#{file_name}.erb")
+end
+
+def render(template, _)
+  ERB.new(template, nil, '-').result(binding)
+end
+
+def post_from_file(file_path)
+  yaml, template = File.read(file_path).split(/^~~~$/)
+
+  slug  = File.basename(file_path).gsub(/\.\w+$/i, '')
+  url   = root_url + slug
+  props = YAML.load(yaml)
+  source_path = file_path
+  public_path = "public/#{slug}.html"
+
+  Post.new(
+    props['title'],
+    props['description'],
+    props['main_image'],
+    props['date'],
+    template,
+    slug,
+    url,
+    source_path,
+    public_path,
+  )
+end
+
+def make_index
+  puts 'make_index'
+  post = post_from_file('source/index')
+  _    = OpenStruct.new(post: post, posts: list_posts)
+
+  contents =
+    render(template('site'), _) do
+      render(post.template, _)
+    end
+
+  File.write(post.public_path, contents)
+end
+
+def make_post(post)
+  puts "make_post: #{post.slug}"
+  _ = OpenStruct.new(post: post)
+
+  contents =
+    render(template('site'), _) do
+      render(template('post'), _) do
+        render(post.template, _)
+      end
+    end
+
+  File.write(post.public_path, contents)
+end
+
+def list_posts
+  Dir['source/*.post']
+    .map     { |file| post_from_file(file)  }
+    .sort_by { |post| Date.parse(post.date) }
+    .reverse
+end
+
+# Helpers
+
+def image_path(file_name)
+  "images/#{file_name}"
+end
+
+def image_alt(file_name)
+  file_name
+    .gsub(File.extname(file_name), '')
+    .split(/[^[[:alnum:]]]+/)
+    .join(' ')
+    .capitalize
+end
+
+def image_url(file_name)
+  root_url + image_path(file_name)
+end
+
+# TODO maybe just have a single css_class optional param instead of extra_props?
+def image_tag(file_name, extra_props={})
+  props = {
+    src: image_path(file_name),
+    alt: image_alt(file_name),
+  }.merge(extra_props).reject { |k, v| v.nil? }.map { |k, v| "#{k}=\"#{v}\""}.join(' ')
+
+  "<img #{props} >"
+end
+
+def figure(file_name, caption)
+  <<-HTML
+  <figure>
+    #{image_tag(file_name)}
+    <figcaption>#{caption}</figcaption>
+  </figure>
+  HTML
+end
+
+# Process
+
+system 'bin/clean'
+
+puts "create /public"
+system 'mkdir -p public'
+
+puts 'copy: css'
+system 'cp source/sugarpops.css public/'
+
+puts 'copy: images/'
+system 'cp -r source/images public/'
+
+make_index
+
+list_posts.each { |post| make_post(post) }

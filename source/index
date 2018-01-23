@@ -1,0 +1,32 @@
+title: Home
+description: "Hola, we’re Tania and Victor. We’re currently wandering around Central America without a plan or a guidebook..."
+main_image: home.jpg
+~~~
+<div class="hero">
+  <%= image_tag('home.jpg', class: "hero-image") %>
+</div>
+<div class="container">
+  <article style="margin-top: 4em;  margin-bottom: 4em">
+    <h1 style="text-align:center">Hola, we’re Tania and Victor</h1>
+    <p>We’re currently wandering around Central America without a plan or a guidebook.</p>
+    <p>We like to eat, drink and giggle with the locals, to learn about their lives and the places they live.</p>
+    <p>This is a wee peek into what we’ve found along the way. We hope it inspires you to grab your backpack and hit the road...or at least get lost in your imagination.</p>
+  </article>
+</div>
+<div class="post-list-container">
+  <h1 style="text-align:center">Latest stories</h1>
+  <div class="post-list">
+    <% _.posts.each do |post| %>
+      <div class="post-item">
+        <a href="<%= post.slug %>">
+          <div class="image">
+            <%= image_tag(post.main_image)%>
+          </div>
+          <div class="text">
+            <h4><%= post.title %></h4>
+          </div>
+        </a>
+      </div>
+    <% end %>
+  </div>
+</div>
