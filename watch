@@ -6,7 +6,7 @@ require 'rb-fsevent'
 
 fsevent = FSEvent.new
 
-fsevent.watch ['source', 'templates'] do |dir|
+fsevent.watch ['source', 'templates', 'bin'] do |dir|
   puts '[watch] Stuff changed...'
   system('bin/make')
   system('afplay /System/Library/Sounds/Tink.aiff')

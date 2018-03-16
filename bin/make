@@ -55,14 +55,14 @@ def post_from_file(file_path)
     slug,
     url,
     source_path,
-    public_path,
+    public_path
   )
 end
 
-def make_index
+def make_index(posts)
   puts 'make_index'
   post = post_from_file('source/index')
-  _    = OpenStruct.new(post: post, posts: list_posts)
+  _    = OpenStruct.new(post: post, posts: posts)
 
   contents =
     render(template('site'), _) do
@@ -72,9 +72,14 @@ def make_index
   File.write(post.public_path, contents)
 end
 
-def make_post(post)
+def make_post(post, previous_post, next_post)
   puts "make_post: #{post.slug}"
-  _ = OpenStruct.new(post: post)
+
+  _ = OpenStruct.new(
+    post: post,
+    previous_post: previous_post,
+    next_post: next_post
+  )
 
   contents =
     render(template('site'), _) do
@@ -90,7 +95,14 @@ def list_posts
   Dir['source/*.post']
     .map     { |file| post_from_file(file)  }
     .sort_by { |post| Date.parse(post.date) }
-    .reverse
+end
+
+def find_previous_post(index, posts)
+  index == 0 ? nil : posts[index - 1]
+end
+
+def find_next_post(index, posts)
+  index == (posts.size - 1) ? nil : posts[index + 1]
 end
 
 # Helpers
@@ -143,6 +155,14 @@ system 'cp source/sugarpops.css public/'
 puts 'copy: images/'
 system 'cp -r source/images public/'
 
-make_index
+posts = list_posts
 
-list_posts.each { |post| make_post(post) }
+make_index(posts.reverse)
+
+posts.each_with_index do |post, index|
+  make_post(
+    post,
+    find_previous_post(index, posts),
+    find_next_post(index, posts)
+  )
+end

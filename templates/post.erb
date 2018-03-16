@@ -10,8 +10,14 @@
 
     <%= yield %>
 
-    <nav style="position:relative;">
-      <a href="/" class="text-link" alt="Home">🏠</a>
-    </nav>
+  <nav style="position:relative;">
+    <% if _.previous_post %>
+      <a href="<%= _.previous_post.slug %>" class="text-link" style="position:absolute;left:0;">← Previous</a>
+    <% end %>
+    <a href="/" class="text-link" alt="Home">🏠</a>
+    <% if _.next_post %>
+      <a href="<%= _.next_post.slug %>" class="text-link" style="position:absolute;right:0;">Next →</a>
+    <% end %>
+  </nav>
   </article>
 </div>
