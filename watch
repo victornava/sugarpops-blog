@@ -1,0 +1,15 @@
+#!/usr/bin/env ruby
+
+# run `gem install rb-fsevent` once before using this
+
+require 'rb-fsevent'
+
+fsevent = FSEvent.new
+
+fsevent.watch ['source', 'templates'] do |dir|
+  puts '[watch] Stuff changed...'
+  system('bin/make')
+  system('afplay /System/Library/Sounds/Tink.aiff')
+end
+
+fsevent.run
