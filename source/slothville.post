@@ -21,7 +21,7 @@ date: 02-Sep-2017
 
 <figure>
   <video controls>
-    <source src="images/tan-riding-along-in-punta-uva.mp4" type="video/mp4" />
+    <source src="<%= image_path('tan-riding-along-in-punta-uva.mp4') %>" type="video/mp4" />
     Sorry, your browser can't play this video. Let V know!
   </video>
   <figcaption>Cruising along on our retro bikes to grab a bite to eat in town.</figcaption>

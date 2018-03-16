@@ -17,6 +17,8 @@ end
 
 # Meat
 
+TIMESTAMP = Time.now.to_i
+
 Post = Struct.new(
   :title,
   :description,
@@ -108,7 +110,7 @@ end
 # Helpers
 
 def image_path(file_name)
-  "images/#{file_name}"
+  "images/#{file_name}?v=#{TIMESTAMP}"
 end
 
 def image_alt(file_name)
