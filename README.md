@@ -1,6 +1,6 @@
 # Sugarpops
 
-Custom site builder and copy of my travel blog 👉 [sugarpops.world](http://sugarpops.world)
+Custom site builder and content of my travel blog 👉 [sugarpops.world](http://sugarpops.world)
 
 ## To make a new blog post
 
